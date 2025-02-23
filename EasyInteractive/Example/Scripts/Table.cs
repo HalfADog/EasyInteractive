@@ -20,4 +20,5 @@ public class Table : MonoBehaviour, IFocusable
 	{
 		_outline.enabled = false;
 	}
+
 }

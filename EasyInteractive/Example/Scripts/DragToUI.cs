@@ -9,6 +9,7 @@ using UnityEngine;
 public class DragToUI : DragSubjectFocusTargetInteractCase
 {
 	private SceneItem sceneItem;
+	private UIItem uiItem;
 	public DragToUI(Type subject, Type target) : base(subject, target)
 	{
 	}
@@ -16,14 +17,15 @@ public class DragToUI : DragSubjectFocusTargetInteractCase
 	{
 		Debug.Log("Enter Case");
 		sceneItem = (subject as SceneItem);
+		uiItem = (target as UIItem);
 	}
 	protected override void OnExecute(IDragable subject, IFocusable target)
 	{
 		if (EndDrag)
 		{
 			Debug.Log("Execute");
-			(target as UIItem).icon.gameObject.SetActive(true);
-			(target as UIItem).icon.sprite = sceneItem.iconSprite;
+			uiItem.icon.gameObject.SetActive(true);
+			uiItem.icon.sprite = sceneItem.iconSprite;
 		}
 	}
 	protected override void OnExit()
