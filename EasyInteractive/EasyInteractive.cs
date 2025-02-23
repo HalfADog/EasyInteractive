@@ -80,6 +80,25 @@ namespace HalfDog.EasyInteractive
 		
 		public void Update()
 		{
+			//满足条件的InteractCase会被执行
+			//这里的满足条件指的是 交互操作与交互对象类型都要一致
+			IInteractCase activeCase = null;
+			for (int i = 0; i < _executingInteractCases.Count; i++)
+			{
+				if (_executingInteractCases[i].enable && _executingInteractCases[i].Execute(currentFocused, currentSelected, currentDraged))
+				{
+					activeCase = _executingInteractCases[i];
+				}
+			}
+			//如果当前激活的情景更改了，则把激活的情景放到列表最前方第一个进行处理
+			//这是为了在情景更改时首先执行激活情景的退出事件(如果有的话)
+			if (activeCase != null && activeCase != _currentActiveInteractCase)
+			{
+				_currentActiveInteractCase = activeCase;
+				_executingInteractCases.Remove(_currentActiveInteractCase);
+				_executingInteractCases.Insert(0, _currentActiveInteractCase);
+			}
+
 			//当指针处于UI上时停止对场景中交互对象的操作
 			if (EventSystem.current?.IsPointerOverGameObject() ?? false)
 			{
@@ -131,24 +150,7 @@ namespace HalfDog.EasyInteractive
 			}
 
 
-			//满足条件的InteractCase会被执行
-			//这里的满足条件指的是 交互操作与交互对象类型都要一致
-			IInteractCase activeCase = null;
-			for (int i = 0; i < _executingInteractCases.Count; i++)
-			{
-				if (_executingInteractCases[i].enable && _executingInteractCases[i].Execute(currentFocused, currentSelected, currentDraged) )
-				{
-					activeCase = _executingInteractCases[i];
-				}
-			}
-			//如果当前激活的情景更改了，则把激活的情景放到列表最前方第一个进行处理
-			//这是为了在情景更改时首先执行激活情景的退出事件(如果有的话)
-			if (activeCase!=null && activeCase != _currentActiveInteractCase) 
-			{
-				_currentActiveInteractCase = activeCase;
-				_executingInteractCases.Remove(_currentActiveInteractCase);
-				_executingInteractCases.Insert(0, _currentActiveInteractCase);
-			}
+			
 			//Debug.Log($"【Focus:{currentFocused?.interactTag.Name}】【Select:{currentSelected?.interactTag.Name}]】【Drag:{currentDraged?.interactTag.Name}】");
 
 			if (Input.GetMouseButtonDown(0) && currentFocused!=null)
@@ -189,6 +191,7 @@ namespace HalfDog.EasyInteractive
 				currentDraged?.ProcessDrag();
 			}
 			//Debug.Log(currentFocused?.interactTag.Name ?? "Null");
+
 		}
 		public void Reset() 
 		{

@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace HalfDog.EasyInteractive
 {
@@ -24,10 +25,9 @@ namespace HalfDog.EasyInteractive
 				if (_isEnter)
 				{
 					_isEnter = false;
-					OnExit(dragable, focusable);
+					OnExit();
 					_isExit = true;
 				}
-
 				return false;
 			}
 
@@ -52,8 +52,9 @@ namespace HalfDog.EasyInteractive
 		/// <summary>
 		/// 退出交互情景
 		/// </summary>
-		protected virtual void OnExit(IDragable subject, IFocusable target)
+		protected virtual void OnExit()
 		{
 		}
+		protected virtual bool EndDrag=>Input.GetMouseButtonUp(0);
 	}
 }
