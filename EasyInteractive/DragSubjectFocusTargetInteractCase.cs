@@ -19,6 +19,7 @@ namespace HalfDog.EasyInteractive
 
 		public override bool Execute(IFocusable focusable, ISelectable selectable, IDragable dragable)
 		{
+			//拖拽对象和聚焦对象都不能为空且对象类型匹配才能执行交互情景
 			if (focusable == null || dragable == null || focusable.interactTag != target ||
 			    dragable.interactTag != subject)
 			{
@@ -55,6 +56,10 @@ namespace HalfDog.EasyInteractive
 		protected virtual void OnExit()
 		{
 		}
+
+		/// <summary>
+		/// 是否结束拖拽
+		/// </summary>
 		protected virtual bool EndDrag=>Input.GetMouseButtonUp(0);
 	}
 }

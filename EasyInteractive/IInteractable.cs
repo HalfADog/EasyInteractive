@@ -60,6 +60,6 @@ namespace HalfDog.EasyInteractive
 		/// <summary>
 		/// 结束拖拽
 		/// </summary>
-		public void EndDrag();
+		public void EndDrag(IFocusable target);
 	}
 }

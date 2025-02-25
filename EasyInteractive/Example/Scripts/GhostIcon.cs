@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 鼠标拖拽图标
+/// </summary>
 public class GhostIcon : MonoBehaviour
 {
 	public static GhostIcon Instance;

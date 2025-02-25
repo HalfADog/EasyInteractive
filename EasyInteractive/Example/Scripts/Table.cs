@@ -2,6 +2,9 @@ using System;
 using UnityEngine;
 using HalfDog.EasyInteractive;
 
+/// <summary>
+/// 放置物体的台面
+/// </summary>
 public class Table : MonoBehaviour, IFocusable
 {
 	public GameObject tempItem;

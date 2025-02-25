@@ -10,6 +10,13 @@ namespace HalfDog.EasyInteractive
 		public Type subject { get; }
 		public Type target { get; }
 		public bool enable { get; set; }
+		/// <summary>
+		/// 执行交互情景
+		/// </summary>
+		/// <param name="focusable">当前聚焦对象</param>
+		/// <param name="selectable">当前选择对象</param>
+		/// <param name="dragable">当前拖拽对象</param>
+		/// <returns></returns>
 		public bool Execute(IFocusable focusable, ISelectable selectable, IDragable dragable);
 	}
 
@@ -24,6 +31,9 @@ namespace HalfDog.EasyInteractive
 		public Type subject => _subject;
 		public Type target => _target;
 
+		/// <summary>
+		/// 是否开启
+		/// </summary>
 		public bool enable
 		{
 			get => _enable;

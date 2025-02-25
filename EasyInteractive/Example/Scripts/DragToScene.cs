@@ -2,6 +2,9 @@ using HalfDog.EasyInteractive;
 using System;
 using UnityEngine;
 
+/// <summary>
+/// 从UIItem拖拽到场景中的交互情景
+/// </summary>
 [InteractCase(typeof(UIItem), typeof(Table))]
 public class DragToScene : DragSubjectFocusTargetInteractCase
 {
@@ -13,7 +16,6 @@ public class DragToScene : DragSubjectFocusTargetInteractCase
 
 	protected override void OnEnter(IDragable subject, IFocusable target)
 	{
-		Debug.Log("Enter Case");
 		uiItem = (subject as UIItem);
 		table = (target as Table);
 		table.tempItem.gameObject.SetActive(true);
@@ -24,13 +26,11 @@ public class DragToScene : DragSubjectFocusTargetInteractCase
 		if (Input.GetMouseButtonUp(0)) 
 		{
 			GameObject.FindObjectOfType<SceneItem>(true).gameObject.SetActive(true);
-			Debug.Log("Execute");
 		}
 	}
 
 	protected override void OnExit()
 	{
-		Debug.Log("Exit Case");
 		table.tempItem.gameObject.SetActive(false);
 		uiItem.icon.gameObject.SetActive(false);
 	}

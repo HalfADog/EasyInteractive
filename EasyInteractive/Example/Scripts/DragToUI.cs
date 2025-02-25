@@ -1,10 +1,9 @@
 using HalfDog.EasyInteractive;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine;
 
+/// <summary>
+/// 拖拽物体到UI上的交互情景
+/// </summary>
 [InteractCase(typeof(SceneItem), typeof(UIItem))]
 public class DragToUI : DragSubjectFocusTargetInteractCase
 {
@@ -15,7 +14,6 @@ public class DragToUI : DragSubjectFocusTargetInteractCase
 	}
 	protected override void OnEnter(IDragable subject, IFocusable target)
 	{
-		Debug.Log("Enter Case");
 		sceneItem = (subject as SceneItem);
 		uiItem = (target as UIItem);
 	}
@@ -23,14 +21,12 @@ public class DragToUI : DragSubjectFocusTargetInteractCase
 	{
 		if (EndDrag)
 		{
-			Debug.Log("Execute");
 			uiItem.icon.gameObject.SetActive(true);
 			uiItem.icon.sprite = sceneItem.iconSprite;
 		}
 	}
 	protected override void OnExit()
 	{
-		Debug.Log("Exit Case");
 		sceneItem.gameObject.SetActive(false);
 	}
 }

@@ -2,6 +2,9 @@ using HalfDog.EasyInteractive;
 using System;
 using UnityEngine;
 
+/// <summary>
+/// 场景对象
+/// </summary>
 public class SceneItem : MonoBehaviour, IDragable
 {
 	public Sprite iconSprite;
@@ -25,17 +28,17 @@ public class SceneItem : MonoBehaviour, IDragable
 	}
 	public void OnDrag()
 	{
-		Debug.Log("Begin Drag");
 		GhostIcon.Instance.ShowGhostIcon(iconSprite);
 		gameObject.SetActive(false);
 	}
 	public void ProcessDrag()
 	{
 	}
-	public void EndDrag()
+	public void EndDrag(IFocusable target)
 	{
-		Debug.Log("End Drag");
 		GhostIcon.Instance.HideGhostIcon();
-		gameObject.SetActive(true);
+		//判断是否拖拽到了目标
+		if (target == null)
+			gameObject.SetActive(true);
 	}
 }

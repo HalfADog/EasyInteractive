@@ -1,6 +1,9 @@
 namespace HalfDog.GameMonoUpdater
 {
-    public interface ICanUseGameMonoUpdater
+	/// <summary>
+	/// 可使用游戏MonoUpdater
+	/// </summary>
+	public interface ICanUseGameMonoUpdater
     {
         public void FixedUpdate();
         public void Update();
@@ -8,9 +11,15 @@ namespace HalfDog.GameMonoUpdater
         public bool InUpdate { get; set; }
     }
 
-    public static class CanUseMonoUpdaterExtension
+	/// <summary>
+	/// 游戏MonoUpdater扩展
+	/// </summary>
+	public static class CanUseMonoUpdaterExtension
     {
-        public static void EnableMonoUpdater(this ICanUseGameMonoUpdater self)
+		/// <summary>
+		/// 启用MonoUpdater
+		/// </summary>
+		public static void EnableMonoUpdater(this ICanUseGameMonoUpdater self)
         {
             if (self.InUpdate) return;
             GameMonoUpdater.AddUpdateAction(self.Update);
@@ -18,8 +27,10 @@ namespace HalfDog.GameMonoUpdater
             GameMonoUpdater.AddLateUpdateAction(self.LateUpdate);
             self.InUpdate = true;
         }
-
-        public static void DisableMonoUpdater(this ICanUseGameMonoUpdater self)
+		/// <summary>
+		/// 禁用MonoUpdater
+		/// </summary>
+		public static void DisableMonoUpdater(this ICanUseGameMonoUpdater self)
         {
             GameMonoUpdater.RemoveUpdateAction(self.Update);
             GameMonoUpdater.RemoveFixedUpdateAction(self.FixedUpdate);

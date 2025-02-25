@@ -3,48 +3,73 @@ using UnityEngine.EventSystems;
 
 namespace HalfDog.EasyInteractive
 {
-    public abstract class InteractableUIElement : MonoBehaviour, 
+	/// <summary>
+	/// 可交互UI元素
+	/// </summary>
+	public abstract class InteractableUIElement : MonoBehaviour, 
         IPointerEnterHandler,
-        IPointerExitHandler
+        IPointerExitHandler,
+        IPointerMoveHandler
     {
         public bool enableInteract = true;
-        public void OnPointerEnter(PointerEventData eventData)
+
+        private IFocusable _focusable = null;
+		private ISelectable _selectable = null;
+        private IDragable _dragable = null;
+
+		public void OnPointerEnter(PointerEventData eventData)
         {
             if (!enableInteract) return;
-            if ((this as IFocusable) != null && (this as IFocusable).enableFocus) 
+			_focusable = (this as IFocusable);
+			_selectable = (this as ISelectable);
+			_dragable = (this as IDragable);
+			if (_focusable != null && _focusable.enableFocus) 
             {
-                EasyInteractive.Instance.SetCurrentFocused(this as IFocusable,true);
+                EasyInteractive.Instance.SetCurrentFocused(_focusable, true);
             }
-            if ((this as ISelectable) != null && (this as ISelectable).enableSelect)
+            if (_selectable != null && _selectable.enableSelect)
             {
-                EasyInteractive.Instance.readySelect = (this as ISelectable);
+                EasyInteractive.Instance.readySelect = _selectable;
             }
-            if ((this as IDragable) != null && (this as IDragable).enableDrag) 
+            if (_dragable != null && _dragable.enableDrag) 
             {
-                EasyInteractive.Instance.readyDrag = (this as IDragable);
+                EasyInteractive.Instance.readyDrag = _dragable;
             }
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+		public void OnPointerMove(PointerEventData eventData)
+		{
+			if (!enableInteract) return;
+			if (_selectable != null && _selectable.enableSelect)
+			{
+				EasyInteractive.Instance.readySelect = _selectable;
+			}
+			if (_dragable != null && _dragable.enableDrag)
+			{
+				EasyInteractive.Instance.readyDrag = _dragable;
+			}
+		}
+
+		public void OnPointerExit(PointerEventData eventData)
         {
             if (!enableInteract) return;
-            if ((this as IFocusable) != null && (this as IFocusable).enableFocus)
+            if (_focusable != null && _focusable.enableFocus)
             {
-                if (EasyInteractive.Instance.currentFocused == (this as IFocusable)) 
+                if (EasyInteractive.Instance.currentFocused == _focusable) 
                 {
                     EasyInteractive.Instance.SetCurrentFocused(null,true);
                 }
             }
-            if ((this as ISelectable) != null && (this as ISelectable).enableSelect)
+            if (_selectable != null && _selectable.enableSelect)
             {
-                if((this as ISelectable) == EasyInteractive.Instance.readySelect)
+                if(EasyInteractive.Instance.readySelect == _selectable)
                     EasyInteractive.Instance.readySelect = null;
             }
-            if ((this as IDragable) != null && (this as IDragable).enableDrag)
+            if (_dragable != null && _dragable.enableDrag)
             {
-                if ((this as IDragable) == EasyInteractive.Instance.readyDrag)
+                if (EasyInteractive.Instance.readyDrag == _dragable)
                     EasyInteractive.Instance.readyDrag = null;
             }
         }
-    }
+	}
 }
