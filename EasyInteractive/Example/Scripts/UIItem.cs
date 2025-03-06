@@ -36,8 +36,8 @@ public class UIItem : InteractableUIElement,IDragable
 	public void EndDrag(IFocusable target)
 	{
 		GhostIcon.Instance.HideGhostIcon();
-		//判断是否拖拽到了目标
-		if (target == null)
+		//判断是否拖拽到了目标 且当前对象和目标对象是否属于同一个交互对象
+		if (target == null || !this.IsBelongToSameCase(target))
 			icon.gameObject.SetActive(true);
 	}
 }
