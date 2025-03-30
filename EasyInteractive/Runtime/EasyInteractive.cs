@@ -132,7 +132,35 @@ namespace HalfDog.EasyInteractive
 				if (Camera.main == null) return;
 				_isPointerOverUI = false;
 				//射线检测
-				Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+				Vector3 mousePos = Input.mousePosition;
+#if INTERACTIVE_2D_MODE
+				mousePos.z = -Camera.main.transform.position.z;
+				Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(mousePos);
+				RaycastHit2D raycastHit2D = Physics2D.Raycast(mouseWorldPos, Vector2.zero,0);
+				if (raycastHit2D.transform != null)
+				{
+					if (raycastHit2D.transform.TryGetComponent(out IFocusable focus))
+					{
+						if (focus != _currentFocused && focus.enableFocus)
+							SetCurrentFocused(focus);
+					}
+					else
+					{
+						SetCurrentFocused(null);
+					}
+
+					if (raycastHit2D.transform.TryGetComponent(out ISelectable selectable) && selectable.enableSelect)
+						_readySelect = selectable;
+					else
+						_readySelect = null;
+
+					if (raycastHit2D.transform.TryGetComponent(out IDragable dragable) && dragable.enableDrag)
+						_readyDrag = dragable;
+					else
+						_readyDrag = null;
+				}
+#else
+				Ray mouseRay = Camera.main.ScreenPointToRay(mousePos);
 				if (Physics.Raycast(mouseRay, out RaycastHit hitInfo, Mathf.Infinity))
 				{
 					if (hitInfo.transform.TryGetComponent(out IFocusable focus))
@@ -155,6 +183,7 @@ namespace HalfDog.EasyInteractive
 					else
 						_readyDrag = null;
 				}
+#endif
 				else
 				{
 					_readyDrag = null;
