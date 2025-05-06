@@ -42,6 +42,7 @@ namespace HalfDog.EasyInteractive
 		//当前激活的交互情景
 		private IInteractCase _currentActiveInteractCase;
 		private bool _inUpdate;
+		private float _dragThreshold = 8f;
 
 		public bool InUpdate
 		{
@@ -67,27 +68,30 @@ namespace HalfDog.EasyInteractive
 			this.EnableMonoUpdater();
 			_interactRelationMapper = new Dictionary<Type, List<Type>>();
 			//加载所有的交互情景
-			Assembly assembly = typeof(EasyInteractive).Assembly;
-			List<Type> types = assembly.GetTypes().Where(type => typeof(IInteractCase).IsAssignableFrom(type) && !type.IsAbstract).ToList();
-			for (int i = 0; i < types.Count; i++)
+			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				InteractCaseAttribute attribute = types[i].GetCustomAttribute<InteractCaseAttribute>();
-				if (attribute != null) {
-					IInteractCase ic = Activator.CreateInstance(types[i], attribute.interactSubject, attribute.interactTarget) as IInteractCase;
-					_allInteractCase.Add(types[i],ic);
-					ic.enable = attribute.enableExecuteOnLoad;
-					_executingInteractCases.Add(ic);
-					//记录下交互对象之间的关系
-					List<Type> list;
-					if (_interactRelationMapper.TryGetValue(attribute.interactSubject, out list))
-						list.Add(attribute.interactTarget);
-					else 
-						_interactRelationMapper.Add(attribute.interactSubject,new List<Type> { attribute.interactTarget });
+				List<Type> types = assembly.GetTypes().Where(type => typeof(IInteractCase).IsAssignableFrom(type) && !type.IsAbstract).ToList();
+				for (int i = 0; i < types.Count; i++)
+				{
+					InteractCaseAttribute attribute = types[i].GetCustomAttribute<InteractCaseAttribute>();
+					if (attribute != null) {
+						IInteractCase ic = Activator.CreateInstance(types[i], attribute.interactSubject, attribute.interactTarget) as IInteractCase;
+						_allInteractCase.Add(types[i],ic);
+						ic.enable = attribute.enableExecuteOnLoad;
+						_executingInteractCases.Add(ic);
+						//记录下交互对象之间的关系
+						List<Type> list;
+						if (_interactRelationMapper.TryGetValue(attribute.interactSubject, out list))
+							list.Add(attribute.interactTarget);
+						else 
+							_interactRelationMapper.Add(attribute.interactSubject,new List<Type> { attribute.interactTarget });
 
-					if (_interactRelationMapper.TryGetValue(attribute.interactTarget, out list))
-						list.Add(attribute.interactSubject);
-					else
-						_interactRelationMapper.Add(attribute.interactTarget, new List<Type> { attribute.interactSubject });
+						if (_interactRelationMapper.TryGetValue(attribute.interactTarget, out list))
+							list.Add(attribute.interactSubject);
+						else
+							_interactRelationMapper.Add(attribute.interactTarget, new List<Type> { attribute.interactSubject });
+					}
 				}
 			}
 		}
@@ -204,7 +208,7 @@ namespace HalfDog.EasyInteractive
 				//如果鼠标按下并且移动了一定距离则开始拖拽
 				if (currentDraged == null && mouseBtnPressed && _possibleDragTarget != null)
 				{
-					if (Vector3.Distance(_mouseDownPosition, Input.mousePosition) > 16f && _readyDrag == _possibleDragTarget)
+					if (Vector3.Distance(_mouseDownPosition, Input.mousePosition) > _dragThreshold && _readyDrag == _possibleDragTarget)
 					{
 						//拖拽与被选中的不能是同一个
 						if (_readyDrag == currentSelected)
